@@ -2,12 +2,11 @@ package dev.robgleason.employeeservice.service;
 
 import dev.robgleason.employeeservice.dto.EmployeeDto;
 import dev.robgleason.employeeservice.entity.Employee;
+import dev.robgleason.employeeservice.exceptions.ResourceNotFoundException;
 import dev.robgleason.employeeservice.mapper.AutoEmployeeMapper;
 import dev.robgleason.employeeservice.repository.EmployeeRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 
 @Service
@@ -28,9 +27,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public EmployeeDto getEmployeeById(Long employeeId) {
-        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
-        Employee employee = optionalEmployee.get();
-        return AutoEmployeeMapper.MAPPER.mapToEmployeeDto(optionalEmployee.get());
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow(
+                () -> new ResourceNotFoundException("Employee", "id", employeeId)
+        );
+        return AutoEmployeeMapper.MAPPER.mapToEmployeeDto(employee);
+//        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
+//        Employee employee = optionalEmployee.get();
+//        return AutoEmployeeMapper.MAPPER.mapToEmployeeDto(optionalEmployee.get());
 
     }
 }

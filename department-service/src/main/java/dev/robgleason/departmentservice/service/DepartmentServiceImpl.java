@@ -2,6 +2,7 @@ package dev.robgleason.departmentservice.service;
 
 import dev.robgleason.departmentservice.dto.DepartmentDto;
 import dev.robgleason.departmentservice.entity.Department;
+import dev.robgleason.departmentservice.exceptions.ResourceNotFoundException;
 import dev.robgleason.departmentservice.mapper.AutoDepartmentMapper;
 import dev.robgleason.departmentservice.repository.DepartmentRepository;
 import lombok.AllArgsConstructor;
@@ -27,9 +28,11 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public DepartmentDto getDepartmentByCode(String departmentCode) {
-        Department department = departmentRepository.findByDepartmentCode(departmentCode);
+        Department department = departmentRepository.findByDepartmentCode(departmentCode).orElseThrow(
+                () -> new ResourceNotFoundException("Department", "id", departmentCode)
+        );
+        return AutoDepartmentMapper.MAPPER.mapToDepartmentDto(department);
 
-        DepartmentDto departmentDto = AutoDepartmentMapper.MAPPER.mapToDepartmentDto(department);
-        return departmentDto;
+
     }
 }
