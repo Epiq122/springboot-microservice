@@ -2,9 +2,12 @@ package dev.robgleason.employeeservice.service;
 
 import dev.robgleason.employeeservice.dto.EmployeeDto;
 import dev.robgleason.employeeservice.entity.Employee;
+import dev.robgleason.employeeservice.mapper.AutoEmployeeMapper;
 import dev.robgleason.employeeservice.repository.EmployeeRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 
 @Service
@@ -16,36 +19,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
 
-        Employee employee = new Employee(
-                employeeDto.getId(),
-                employeeDto.getFirstName(),
-                employeeDto.getLastName(),
-                employeeDto.getEmail()
-        );
+        Employee employee = AutoEmployeeMapper.MAPPER.mapToEmployee(employeeDto);
 
         Employee savedEmployee = employeeRepository.save(employee);
 
-        EmployeeDto savedEmployeeDto = new EmployeeDto(
-                savedEmployee.getId(),
-                savedEmployee.getFirstName(),
-                savedEmployee.getLastName(),
-                savedEmployee.getEmail()
-        );
-
-
-        return savedEmployeeDto;
+        return AutoEmployeeMapper.MAPPER.mapToEmployeeDto(savedEmployee);
     }
 
     @Override
     public EmployeeDto getEmployeeById(Long employeeId) {
-        Employee employee = employeeRepository.findById(employeeId).get();
+        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
+        Employee employee = optionalEmployee.get();
+        return AutoEmployeeMapper.MAPPER.mapToEmployeeDto(optionalEmployee.get());
 
-        EmployeeDto employeeDto = new EmployeeDto(
-                employee.getId(),
-                employee.getFirstName(),
-                employee.getLastName(),
-                employee.getEmail()
-        );
-        return employeeDto;
     }
 }
