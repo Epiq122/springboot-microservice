@@ -20,7 +20,7 @@ public class DepartmentController {
     // save department rest api
 
     @PostMapping
-    public ResponseEntity<DepartmentDto> saveDepartment(@RequestBody DepartmentDto departmentDto){
+    public ResponseEntity<DepartmentDto> saveDepartment(@RequestBody DepartmentDto departmentDto) {
         DepartmentDto savedDepartment = departmentService.saveDepartment(departmentDto);
         return new ResponseEntity<>(savedDepartment, HttpStatus.CREATED);
 
@@ -30,9 +30,9 @@ public class DepartmentController {
 
 
     @GetMapping("{department-code}")
-    public ResponseEntity<DepartmentDto> getDepartment(@PathVariable("department-code")String departmentCode){
+    public ResponseEntity<DepartmentDto> getDepartment(@PathVariable("department-code") String departmentCode) {
         DepartmentDto departmentByCode = departmentService.getDepartmentByCode(departmentCode);
-        return new ResponseEntity<>(departmentByCode,HttpStatus.OK);
+        return new ResponseEntity<>(departmentByCode, HttpStatus.OK);
     }
 
 }

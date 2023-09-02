@@ -1,5 +1,7 @@
 package dev.robgleason.employeeservice.service;
 
+import dev.robgleason.employeeservice.dto.APIResponseDto;
+import dev.robgleason.employeeservice.dto.DepartmentDto;
 import dev.robgleason.employeeservice.dto.EmployeeDto;
 import dev.robgleason.employeeservice.entity.Employee;
 import dev.robgleason.employeeservice.exceptions.ResourceNotFoundException;
@@ -15,6 +17,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private EmployeeRepository employeeRepository;
 
+
+    private APIClient apiClient;
+
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
 
@@ -26,14 +31,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDto getEmployeeById(Long employeeId) {
+    public APIResponseDto getEmployeeById(Long employeeId) {
         Employee employee = employeeRepository.findById(employeeId).orElseThrow(
                 () -> new ResourceNotFoundException("Employee", "id", employeeId)
         );
-        return AutoEmployeeMapper.MAPPER.mapToEmployeeDto(employee);
-//        Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
-//        Employee employee = optionalEmployee.get();
-//        return AutoEmployeeMapper.MAPPER.mapToEmployeeDto(optionalEmployee.get());
 
+        DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
+
+        EmployeeDto employeeDto = AutoEmployeeMapper.MAPPER.mapToEmployeeDto(employee);
+        APIResponseDto apiResponseDto = new APIResponseDto();
+        apiResponseDto.setEmployee(employeeDto);
+        apiResponseDto.setDepartment(departmentDto);
+
+        return apiResponseDto;
     }
 }
