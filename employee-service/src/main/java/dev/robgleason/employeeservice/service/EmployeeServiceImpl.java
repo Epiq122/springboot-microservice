@@ -9,7 +9,6 @@ import dev.robgleason.employeeservice.mapper.AutoEmployeeMapper;
 import dev.robgleason.employeeservice.repository.EmployeeRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 
 @Service
@@ -19,7 +18,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeRepository employeeRepository;
 
 
-    private WebClient webClient;
+    private APIClient apiClient;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) {
@@ -37,10 +36,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 () -> new ResourceNotFoundException("Employee", "id", employeeId)
         );
 
-        DepartmentDto departmentDto = webClient.get().uri("http://localhost:8080/api/departments/" + employee.getDepartmentCode())
-                .retrieve()
-                .bodyToMono(DepartmentDto.class)
-                .block();
+        DepartmentDto departmentDto = apiClient.getDepartment(employee.getDepartmentCode());
 
         EmployeeDto employeeDto = AutoEmployeeMapper.MAPPER.mapToEmployeeDto(employee);
         APIResponseDto apiResponseDto = new APIResponseDto();
